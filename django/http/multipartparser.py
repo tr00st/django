@@ -551,7 +551,8 @@ def parse_boundary_stream(stream, max_header_size):
     # 'find' returns the top of these four bytes, so we'll
     # need to munch them later to prevent them from polluting
     # the payload.
-    header_end = chunk.replace("\r\n","\n").find(b'\n\n')
+    chunk = chunk.replace("\r\n","\n").encode('utf8')
+    header_end = chunk.find(b'\n\n')
 
     def _parse_header(line):
         main_value_pair, params = parse_header(line)
@@ -571,13 +572,13 @@ def parse_boundary_stream(stream, max_header_size):
 
     # here we place any excess chunk back onto the stream, as
     # well as throwing away the CRLFCRLF bytes from above.
-    stream.unget(chunk[header_end + 4:])
+    stream.unget(chunk[header_end + 2:])
 
     TYPE = RAW
     outdict = {}
 
     # Eliminate blank lines
-    for line in header.split(b'\r\n'):
+    for line in header.split(b'\n'):
         # This terminology ("main value" and "dictionary of
         # parameters") is from the Python docs.
         try:
