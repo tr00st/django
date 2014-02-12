@@ -551,7 +551,7 @@ def parse_boundary_stream(stream, max_header_size):
     # 'find' returns the top of these four bytes, so we'll
     # need to munch them later to prevent them from polluting
     # the payload.
-    header_end = chunk.find(b'\r\n\r\n')
+    header_end = chunk.replace("\r\n","\n").find(b'\n\n')
 
     def _parse_header(line):
         main_value_pair, params = parse_header(line)
